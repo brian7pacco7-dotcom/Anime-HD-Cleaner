@@ -30,13 +30,19 @@ jobs:
         run: |
           ZIP_FILE=$(find . -maxdepth 1 -iname "*.zip" | head -n 1)
           if [ -z "$ZIP_FILE" ]; then
-            echo "No se encontró ningún ZIP en la raíz del repositorio"
+            echo "No se encontro ningun ZIP en la raiz del repositorio"
             exit 1
           fi
           echo "ZIP encontrado: $ZIP_FILE"
+          rm -rf source
           mkdir source
           unzip -q "$ZIP_FILE" -d source
           ls -la source
+
+      - name: Corregir dependencia FFmpeg
+        run: |
+          sed -i 's/com.arthenica:ffmpeg-kit-full-gpl:6.0-2/com.arthenica:ffmpeg-kit-full-gpl:6.0-2.LTS/g' source/app/build.gradle
+          cat source/app/build.gradle
 
       - name: Configurar Gradle
         uses: gradle/actions/setup-gradle@v4
